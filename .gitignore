@@ -1,0 +1,46 @@
+# 编译生成文件
+*.o
+*.obj
+*.exe
+*.out
+*.dll
+*.so
+*.dylib
+StudentSystemCore
+TestCases
+
+# IDE相关文件
+.vs/
+.vscode/
+*.sln
+*.suo
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.swp
+*.swo
+*~
+
+# 操作系统相关文件
+.DS_Store
+Thumbs.db
+
+# 编译日志
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 测试输出
+*.testout
+
+# 文档生成
+*.html
+*.xml
+*.pdf
+
+# 包管理
+*.tar.gz
+*.zip
+*.rar
