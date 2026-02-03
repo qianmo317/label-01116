@@ -17,7 +17,8 @@
 build.bat
 
 # 编译完成后会生成可执行文件：
-# StudentSystemCore.exe - 主程序
+StudentSystemCore.exe - 主程序
+DemoTestCases.exe - 演示程序
 ```
 
 ##### Linux/Mac系统
@@ -29,7 +30,8 @@ chmod +x build.sh
 ./build.sh
 
 # 编译完成后会生成可执行文件：
-# ./StudentSystemCore - 主程序
+./StudentSystemCore - 主程序
+./DemoTestCases - 演示程序
 ```
 
 #### 方法2：使用Visual Studio 2022
