@@ -46,7 +46,8 @@ chmod +x build.sh
 g++ -std=c++17 -O2 backend/src/main.cpp backend/src/CourseScheduleGreedy.cpp backend/src/ClubResourceGreedy.cpp backend/src/ScorePredictDP.cpp backend/src/PathPlanDP.cpp -o StudentSystemCore
 ```
 
-### 5分钟快速体验
+
+### 运行交互程序
 ```bash
 # Windows
 build.bat
@@ -55,6 +56,17 @@ StudentSystemCore.exe
 # Linux/Mac
 chmod +x build.sh && ./build.sh
 ./StudentSystemCore
+```
+
+### 运行演示程序
+```bash
+# Windows
+build.bat
+DemoTestCases.exe
+
+# Linux/Mac
+chmod +x build.sh && ./build.sh
+./DemoTestCases
 ```
 
 ## Services
