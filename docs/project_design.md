@@ -80,6 +80,12 @@ struct Course {
     int dayOfWeek;              // 星期几（1-7）
     int credits;                // 学分
     int priority;               // 兴趣优先级（1-10）
+
+    Course() : courseId(0), startTime(0), endTime(0), dayOfWeek(1), credits(0), priority(1) {}
+    
+    Course(int id, const std::string& name, int start, int end, int day, int cred, int prio)
+        : courseId(id), courseName(name), startTime(start), endTime(end), 
+          dayOfWeek(day), credits(cred), priority(prio) {}
 };
 ```
 
@@ -93,6 +99,12 @@ struct Club {
     int activityScale;          // 活动规模（人数）
     int venueNeeded;            // 需要场地数
     double fundNeeded;          // 需要资金额度
+
+    Club() : clubId(0), priority(1), historyScore(0.0), activityScale(0), venueNeeded(0), fundNeeded(0.0) {}
+    
+    Club(int id, const std::string& name, int prio, double history, int scale, int venue, double fund)
+        : clubId(id), clubName(name), priority(prio), historyScore(history), 
+          activityScale(scale), venueNeeded(venue), fundNeeded(fund) {}
 };
 ```
 
@@ -105,6 +117,65 @@ struct ScoreRecord {
     double difficulty;          // 课程难度系数（0-1）
     double attendance;          // 出勤率（0-1）
     double homeworkRate;        // 作业完成度（0-1）
+
+    ScoreRecord() : courseId(0), score(0.0), difficulty(0.5), attendance(1.0), homeworkRate(1.0) {}
+    
+    ScoreRecord(int id, const std::string& name, double sc, double diff, double att, double hw)
+        : courseId(id), courseName(name), score(sc), difficulty(diff), attendance(att), homeworkRate(hw) {}
+};
+```
+
+### CampusNode (校园节点信息)
+```cpp
+struct CampusNode {
+    int nodeId;                 // 节点编号
+    std::string nodeName;       // 节点名称（如"教学楼A"）
+    std::string nodeType;       // 节点类型（教学楼/宿舍/食堂等）
+    double slopeFactor;         // 坡度因子（影响路径权重）
+
+    CampusNode() : nodeId(0), slopeFactor(1.0) {}
+    
+    CampusNode(int id, const std::string& name, const std::string& type, double slope = 1.0)
+        : nodeId(id), nodeName(name), nodeType(type), slopeFactor(slope) {}
+};
+```
+
+### PathEdge (路径边信息)
+```cpp
+struct PathEdge {
+    int fromNode;               // 起始节点
+    int toNode;                 // 目标节点
+    double distance;            // 距离（米）
+    double congestionFactor;    // 拥堵系数（1.0为正常，>1.0为拥堵）
+
+    PathEdge() : fromNode(0), toNode(0), distance(0.0), congestionFactor(1.0) {}
+    
+    PathEdge(int from, int to, double dist, double congestion = 1.0)
+        : fromNode(from), toNode(to), distance(dist), congestionFactor(congestion) {}
+};
+```
+
+### AllocationResult (资源分配结果)
+```cpp
+struct AllocationResult {
+    Club club;                  // 分配的社团
+    int allocatedVenues;        // 分配的场地数
+    double allocatedFunds;      // 分配的资金
+    bool isFullyAllocated;      // 是否完全满足需求
+
+    AllocationResult() : allocatedVenues(0), allocatedFunds(0.0), isFullyAllocated(false) {}
+};
+```
+
+### PathResult (路径规划结果)
+```cpp
+struct PathResult {
+    std::vector<int> path;      // 路径节点序列
+    double totalCost;           // 总代价
+    double totalDistance;       // 总距离
+    bool pathFound;             // 是否找到路径
+
+    PathResult() : totalCost(0.0), totalDistance(0.0), pathFound(false) {}
 };
 ```
 
@@ -158,22 +229,34 @@ StudentSystemException (基类)
 ### CourseScheduleGreedy
 - `std::vector<Course> optimizeSchedule(std::vector<Course>& courses)` - 主优化函数
 - `bool hasTimeConflict(const Course& a, const Course& b)` - 冲突检测
+- `bool hasConflictWithSelected(const Course& newCourse)` - 检查新课程与已选课程冲突
+- `static bool compareCourses(const Course& a, const Course& b)` - 课程优先级比较
 - `void printScheduleResult(const std::vector<Course>& result)` - 结果输出
-- `void validateInput(const std::vector<Course>& courses)` - 输入验证
+- `int getTotalCredits() const` - 获取总学分
+- `double getTotalPriorityScore() const` - 获取总优先级得分
+- `void clearSelection()` - 清空选择结果
 
 ### ClubResourceGreedy
 - `std::vector<AllocationResult> allocateResources(std::vector<Club>& clubs, int venues, double funds)` - 资源分配
 - `bool canAllocate(const Club& club, int availableVenues, double availableFunds)` - 分配检查
+- `static bool compareClubs(const Club& a, const Club& b)` - 社团优先级比较
 - `void printAllocationResult(const std::vector<AllocationResult>& results)` - 结果输出
+- `void printResourceUtilization()` - 获取资源利用率统计
+- `void clearAllocation()` - 清空分配结果
 
 ### ScorePredictDP
 - `std::pair<double, double> predictScoreRange(std::vector<ScoreRecord>& history, double difficulty, double attendance, double homeworkRate)` - 成绩预测
-- `std::vector<std::pair<double, double>> predictMultipleCourses(...)` - 多课程预测
-- `void printPredictionResult(const std::pair<double, double>& range, ...)` - 结果输出
+- `std::vector<std::pair<double, double>> predictMultipleCourses(std::vector<ScoreRecord>& history, std::vector<std::tuple<double, double, double>>& futureCourses)` - 多课程预测
+- `std::vector<std::vector<double>> calculateTransitionMatrix(const ScoreRecord& prev, double difficulty, double attendance, double homeworkRate)` - 计算状态转移概率
+- `void printPredictionResult(const std::pair<double, double>& range, double difficulty, double attendance, double homeworkRate)` - 结果输出
+- `static int getScoreRangeIndex(double score)` - 获取成绩区间索引
+- `static std::string getScoreRangeName(int index)` - 获取区间名称
 
 ### PathPlanDP
-- `PathResult findOptimalPath(std::vector<std::vector<double>>& graph, std::vector<CampusNode>& nodeInfo, int start, int end, ...)` - 路径规划
-- `void updatePathWeights(...)` - 权重更新
+- `PathResult findOptimalPath(std::vector<std::vector<double>>& graph, std::vector<CampusNode>& nodeInfo, int start, int end, double slopeWeight = 1.0, double congestionWeight = 1.0)` - 路径规划
+- `void updatePathWeights(std::vector<std::vector<double>>& graph, std::vector<CampusNode>& nodeInfo, double slopeWeight, double congestionWeight)` - 权重更新
+- `static double getEstimatedDistance(const CampusNode& node1, const CampusNode& node2)` - 获取两点间的直线距离估算
+- `bool validatePath(const std::vector<int>& path, const std::vector<std::vector<double>>& graph)` - 验证路径的有效性
 - `void printPathResult(const PathResult& result, const std::vector<CampusNode>& nodeInfo)` - 结果输出
 
 ## 编译配置
