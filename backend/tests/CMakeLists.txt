@@ -1,0 +1,8 @@
+add_executable(UnitTestCases TestCases.cpp)
+target_link_libraries(UnitTestCases PRIVATE algorithms)
+
+add_executable(DemoTestCases DemoTestCases.cpp)
+target_link_libraries(DemoTestCases PRIVATE algorithms)
+
+add_executable(PerformanceTests PerformanceTests.cpp)
+target_link_libraries(PerformanceTests PRIVATE algorithms)
